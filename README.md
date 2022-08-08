@@ -1,3 +1,3 @@
 # TDD-API-PetStore-Stockbit
 
-API Test Script using Cypress
+Test Script using Cypress for API in PetStore swagger.io 
