@@ -1,12 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const stockSchema = new Schema({
-    id : Number,
-    petId : Number,
-    name : String,
-    quantity : Number,
-    price : Number
-});
 const orderSchema = new Schema({
     id : Number,
     petId : Number,
@@ -16,16 +9,9 @@ const orderSchema = new Schema({
     complete : Boolean
 });
 
-const stockModel = mongoose.model('Stock', stockSchema);
 const orderModel = mongoose.model('Order', orderSchema);
 
 class StoreServiceModel {
-    static async getStock(){
-        return await stockModel.find({$gt: {quantity: 0}});
-    }
-    static async getStockByPetId(id) {
-        return await stockModel.findOne({petId: id});
-    }
     static async findbyId(id) {
         return await orderModel.findOne({id: id});
     }
