@@ -21,8 +21,8 @@ class PetServiceModel {
     static async findbyId(id) {
         return await petModel.findOne({id: id});
     }
-    static async findByStatus(reqStatus) {
-        return await petModel.find({status: reqStatus});
+    static async getStock() {
+        return await petModel.find({status: 'available'});
     }
     static async createNewPet(newPet) {
         return await petModel.create(newPet);
