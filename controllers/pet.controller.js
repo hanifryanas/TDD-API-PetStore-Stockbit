@@ -28,7 +28,10 @@ class PetController {
             }
             else {
                 const createdPet = await PetServiceModel.createNewPet(newPet)
-                createdPet ? res.status(201).json(createdPet) : res.status(500).json({message: 'Error creating pet'});        
+                createdPet ? res.status(201).json({
+                    message: 'Pet created successfully',
+                    pet : createdPet
+                }) : res.status(500).json({message: 'Error creating pet'});        
             }
         }
     }
@@ -36,7 +39,12 @@ class PetController {
         const reqId = req.params.id;
         const {name, status} = req.body;
         const newPet = {name, status};
-        if(newPet.name == null && newPet.status == null || typeof(newPet.name) != 'string' && typeof(newPet.status) != 'string') {
+        if(Object.values(newPet)[0] == undefined && Object.values(newPet)[1] == undefined) {
+            res.status(405).json({
+                message: 'Invalid input pet supplied'
+            })
+        }
+        else if (Object.values(newPet)[0]!==undefined && typeof Object.values(newPet)[0] != 'string' || Object.values(newPet)[1]!==undefined && typeof Object.values(newPet)[1] != 'string') {
             res.status(405).json({
                 message: 'Invalid input pet supplied'
             })
@@ -45,7 +53,10 @@ class PetController {
             const existingPet = await PetServiceModel.findbyId(reqId);
             if(existingPet) {
                 const updatedPet = await PetServiceModel.updateNameStatusPet(reqId, newPet);
-                updatedPet ? res.status(200).json(updatedPet) : res.status(500).json({message: 'Error updating pet'});
+                updatedPet!=null ? res.status(200).json({
+                    message: 'Pet updated successfully',
+                    pet : updatedPet
+                }) : res.status(500).json({message: 'Error updating pet'});
             } else {
                 res.status(404).json({
                     message: 'Pet not found'
@@ -66,7 +77,11 @@ class PetController {
             const existingPet = await PetServiceModel.findbyId(reqId);
             if(existingPet) {
                 const updatedPet = await PetServiceModel.addImagePet(reqId, newPet);
-                updatedPet ? res.status(200).json(updatedPet) : res.status(500).json({message: 'Error updating pet'});
+                updatedPet!=null ? res.status(200).json({
+                    message: 'Pet image uploaded successfully',
+                    pet : updatedPet
+                }) 
+                : res.status(500).json({message: 'Error updating pet'});
             } else {
                 res.status(404).json({
                     message: 'Pet not found'
@@ -87,7 +102,10 @@ class PetController {
             const existingPet = await PetServiceModel.findbyId(reqId);
             if(existingPet) {
                 const updatedPet = await PetServiceModel.updatePet(reqId, newPet);
-                updatedPet ? res.status(200).json(updatedPet) : res.status(500).json({message: 'Error updating pet'});
+                updatedPet ? res.status(200).json({
+                    message: 'Pet updated successfully',
+                    pet : updatedPet
+                }) : res.status(500).json({message: 'Error updating pet'});
             } else {
                 res.status(404).json({
                     message: 'Pet not found'
@@ -100,7 +118,7 @@ class PetController {
         const existingPet = await PetServiceModel.findbyId(reqId);
         if(existingPet) {
             const deletedPet = await PetServiceModel.deletePet(reqId);
-            deletedPet ? res.status(200).json({message: 'Pet deleted'}) : res.status(500).json({message: 'Error deleting pet'});
+            deletedPet ? res.status(200).json({message: 'Pet deleted successfully'}) : res.status(500).json({message: 'Error deleting pet'});
         } else {
             res.status(404).json({
                 message: 'Pet not found'

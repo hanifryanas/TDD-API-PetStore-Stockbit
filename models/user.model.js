@@ -20,8 +20,13 @@ class UserServiceModel {
     static async createNewUser(newUser) {
         return await userModel.create(newUser);
     }
-    static async updateUser(username, newUser) {
-        return await userModel.updateOne({username: username}, newUser);
+    static async updateUser(reqUsername, newUser) {
+        const result = await userModel.updateOne({username: reqUsername}, newUser);
+        if(result.acknowledged===true){
+            return await userModel.findOne({username: reqUsername})
+        } else {
+            return null; 
+        }
     }
     static async deleteUser(username) {
         return await userModel.deleteOne({username: username});

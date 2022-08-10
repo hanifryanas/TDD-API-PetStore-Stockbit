@@ -7,9 +7,7 @@ const petSchema = new Schema({
         name : String
     },
     name : String,
-    photoUrls : [
-        String
-    ],
+    photoUrls : Object,
     tags : [{
         id : Number,
         name : String
@@ -30,13 +28,34 @@ class PetServiceModel {
         return await petModel.create(newPet);
     }
     static async addImagePet(id, image) {
-        return await petModel.updateOne({id: id}, {$push: {photoUrls: image}});
+        const petResult = await petModel.findOne({id: id});
+        if(petResult) {
+            let currentPhotoUrls = petResult.photoUrls;
+            let newPhotoUrls = currentPhotoUrls.concat(image.photoUrls);
+            const updatedPet = await petModel.updateOne({id: id}, {photoUrls: newPhotoUrls});
+            if(updatedPet.acknowledged) {
+                return await petModel.findOne({id: id});
+            } else {
+                return null;
+            }
+        }
     }
     static async updateNameStatusPet(id, newPet) {
-        return await petModel.updateOne({id: id}, newPet);
+        const result = await petModel.updateOne({id: id}, newPet);
+        if(result.acknowledged) {
+            return await petModel.findOne({id: id});
+        } else {
+            return null;
+        }
     }
     static async updatePet(id, updatedPet){
-        return await petModel.updateOne({id: id}, updatedPet);
+        const result = await petModel.updateOne({id: id}, updatedPet);
+        if(result.acknowledged) {
+            return await petModel.findOne({id: id});
+        }
+        else {
+            return null;
+        }
     }
     static async deletePet(id) {
         return await petModel.deleteOne({id: id});

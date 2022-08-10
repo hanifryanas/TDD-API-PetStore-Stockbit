@@ -6,7 +6,7 @@ router.get('/login', UserController.login);
 router.get('/logout', UserController.logout);
 router.get('/:username', UserController.getUserByUsername);
 router.post('/', UserController.createNewUser);
-router.put('/:username', Middleware.checkAuth, UserController.updateUserByUsername);
-router.delete('/:username', Middleware.checkAuth, UserController.deleteUserByUsername);
+router.put('/:username', Middleware.checkUserAuth, UserController.updateUserByUsername);
+router.delete('/:username', Middleware.checkUserAuth, UserController.deleteUserByUsername);
 
 module.exports = router;

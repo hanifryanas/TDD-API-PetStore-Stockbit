@@ -14,12 +14,15 @@ class UserController{
             if(existingUser.password == password) {
                 res.status(200).json({
                     message: 'Login successful',
-                    token: jwt.sign( process.env.SECRET_KEY,
-                    {expiresIn: '3h'}, {ratelimit: {max : 10}})
-                });
+                    token: jwt.sign({
+                        username: existingUser.username,
+                        id: existingUser._id
+                    }, process.env.SECRET_KEY,
+                    { expiresIn: '3h' })
+                })
             } else {
                 res.status(401).json({
-                    message: 'Invalid password'
+                    message: 'Wrong password'
                 })
             }
         } else {
@@ -68,12 +71,11 @@ class UserController{
             const existingUser = await UserServiceModel.findbyUsername(reqUsername);
             if(existingUser) {
                 const updatedUser = await UserServiceModel.updateUser(reqUsername, newUser);
-                updatedUser ? res.status(200).json(updatedUser) : res.status(500).json({message: 'Error updating user'});
-            } else {
-                res.status(404).json({
-                    message: 'User not found'
-                })
-            }
+                (updatedUser!==null) ? res.status(200).json({
+                    message: 'User updated',
+                    user : updatedUser
+                }) : res.status(500).json({message: 'Error updating user'});
+            } 
         }
     }
     static async deleteUserByUsername(req, res){
@@ -81,12 +83,8 @@ class UserController{
         const existingUser = await UserServiceModel.findbyUsername(reqUsername);
         if(existingUser) {
             const deletedUser = await UserServiceModel.deleteUser(reqUsername);
-            deletedUser ? res.status(200).json(deletedUser) : res.status(500).json({message: 'Error deleting user'});
-        } else {
-            res.status(404).json({
-                message: 'User not found'
-            })
-        }
+            deletedUser ? res.status(200).json({message: 'User deleted'}) : res.status(500).json({message: 'Error deleting user'});
+        } 
     }
 }
 
